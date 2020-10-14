@@ -89,16 +89,19 @@ def create_app(test_config=None):
   Try using the word "title" to start. 
   '''
 
-  '''
-  @TODO: 
-  Create a GET endpoint to get questions based on category. 
 
-  TEST: In the "List" tab / main screen, clicking on one of the 
-  categories in the left column will cause only questions of that 
-  category to be shown. 
-  '''
+ 
+  @app.route('/api/v1/categories/<id>/questions', methods=['GET'])
+  def get_questions_by_category(id):
+    questions_list = [question.format() for question in  Question.query.filter(Question.category == id).all()]
 
-
+    return jsonify({
+      "questions": questions_list,
+      "total_questions": len(questions_list),
+      "current_category": id
+    }), 200
+    
+  
   '''
   @TODO: 
   Create a POST endpoint to get questions to play the quiz. 
