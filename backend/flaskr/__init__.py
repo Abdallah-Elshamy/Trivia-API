@@ -82,7 +82,7 @@ def create_app(test_config=None):
   @app.route('/api/v1/questions/phrase', methods=['POST'])
   def find_question():
     search_term = request.get_json()['searchTerm']
-    questions_list = [question.format() for question in Question.query.filter(Question.question.ilike(f"%{search_term}%")).all()]
+    questions_list = [question.format() for question in Question.query.filter(Question.question.ilike('%'+search_term+'%')).all()]
     return jsonify({
       "questions": questions_list,
       "total_questions": len(questions_list),
@@ -112,6 +112,25 @@ def create_app(test_config=None):
   one question at a time is displayed, the user is allowed to answer
   and shown whether they were correct or not. 
   '''
+  @app.route('/api/v1/quizzes', methods=['POST'])
+  def make_quiz():
+    quiz_data = request.get_json()
+    quiz_category = quiz_data["quiz_category"]
+    previous_questions = quiz_data["previous_questions"]
+    print(previous_questions)
+    questions_list = [question.format() for question in  Question.query.filter(Question.category == quiz_category['id']).all()]
+    for question in  questions_list:
+      if question['id'] not in previous_questions:
+        return jsonify({
+          "success": True,
+          "code": 200,
+          "question": question
+        }), 200
+    return jsonify({
+          "success": True,
+          "code": 200,
+          "question": None
+        }), 200
 
   '''
   @TODO: 
