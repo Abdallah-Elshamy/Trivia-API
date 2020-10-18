@@ -84,6 +84,8 @@ def create_app(test_config=None):
     search_term = request.get_json()['searchTerm']
     questions_list = [question.format() for question in Question.query.filter(Question.question.ilike('%'+search_term+'%')).all()]
     return jsonify({
+      "success": True,
+      "code": 200,
       "questions": questions_list,
       "total_questions": len(questions_list),
     }), 200
@@ -95,6 +97,8 @@ def create_app(test_config=None):
     questions_list = [question.format() for question in  Question.query.filter(Question.category == id).all()]
 
     return jsonify({
+      "success": True,
+      "code": 200,
       "questions": questions_list,
       "total_questions": len(questions_list),
       "current_category": id
