@@ -66,9 +66,13 @@ def create_app(test_config=None):
 
   @app.route('/api/v1/questions', methods=['POST'])
   def add_question():
-    question_data = request.get_json()
-    question = Question(question_data['question'], question_data['answer'],
-                        question_data['category'], question_data['difficulty'])
+    try: 
+      question_data = request.get_json()
+      question = Question(question_data['question'], question_data['answer'],
+                          question_data['category'], question_data['difficulty'])
+    except:
+      abort(400)
+
     try:
       question.insert()    
       return jsonify({
@@ -81,8 +85,13 @@ def create_app(test_config=None):
 
   @app.route('/api/v1/questions/phrase', methods=['POST'])
   def find_question():
-    search_term = request.get_json()['searchTerm']
+    try:
+      search_term = request.get_json()['searchTerm']
+    except:
+      abort(400)
+
     questions_list = [question.format() for question in Question.query.filter(Question.question.ilike('%'+search_term+'%')).all()]
+
     return jsonify({
       "success": True,
       "code": 200,
@@ -106,11 +115,14 @@ def create_app(test_config=None):
     
   @app.route('/api/v1/quizzes', methods=['POST'])
   def make_quiz():
-    quiz_data = request.get_json()
-    quiz_category = quiz_data["quiz_category"]
-    previous_questions = quiz_data["previous_questions"]
-    print(previous_questions)
-    questions_list = [question.format() for question in  Question.query.filter(Question.category == quiz_category['id']).all()]
+    try:
+      quiz_data = request.get_json()
+      quiz_category = quiz_data["quiz_category"]
+      previous_questions = quiz_data["previous_questions"]
+      questions_list = [question.format() for question in  Question.query.filter(Question.category == quiz_category['id']).all()]
+    except:
+      abort(400)
+
     for question in  questions_list:
       if question['id'] not in previous_questions:
         return jsonify({
@@ -139,7 +151,6 @@ def create_app(test_config=None):
       "error": 422,
       "message": "Unprocessable Entity"
     }), 422
-  return app
 
   @app.errorhandler(400)
   def bad_request(error):
@@ -148,7 +159,6 @@ def create_app(test_config=None):
       "error": 400,
       "message": "Bad Request"
     }), 400
-  return app
 
   @app.errorhandler(500)
   def internal_error(error):
