@@ -55,6 +55,10 @@ def create_app(test_config=None):
   @app.route('/api/v1/questions/<id>', methods=['DELETE'])
   def delete_question(id):
     question = Question.query.get(id)
+
+    if question == None:
+      abort(422)
+
     try: 
       question.delete()
       return jsonify({
@@ -62,7 +66,7 @@ def create_app(test_config=None):
         "code": 200,
       }), 200
     except:
-      abort(422)
+      abort(500)
 
   @app.route('/api/v1/questions', methods=['POST'])
   def add_question():
@@ -80,7 +84,7 @@ def create_app(test_config=None):
         "code": 201
       }), 201
     except:
-      abort(422)
+      abort(500)
 
 
   @app.route('/api/v1/questions/phrase', methods=['POST'])
