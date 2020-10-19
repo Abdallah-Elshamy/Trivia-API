@@ -1,6 +1,9 @@
 .vscode
 __pycache__
 venv
+env
+frontend/node_modules/
+package-lock.json
 
 # OS generated files #
 ######################
@@ -11,3 +14,4 @@ venv
 .Trashes
 ehthumbs.db
 Thumbs.db
+*.pyc
